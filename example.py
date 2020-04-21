@@ -13,20 +13,23 @@ model.fit(X_train, y_train, verbose=100, eval_set=(X_test, y_test), )
 
 ### Saving Model
 
-# model.save_model(
-#     "boston.onnx",
-#     format="onnx",
-#     export_parameters={
-#         'onnx_domain': 'ai.catboost',
-#         'onnx_model_version': 1,
-#         'onnx_doc_string': 'test model for boston dataset',
-#         'onnx_graph_name': 'CatBoostModel_for_BinaryClassification'
-#     }
-# )
+model.save_model(
+    "boston.onnx",
+    format="onnx",
+    export_parameters={
+        'onnx_domain': 'ai.catboost',
+        'onnx_model_version': 1,
+        'onnx_doc_string': 'test model for boston dataset',
+        'onnx_graph_name': 'CatBoostModel_for_BinaryClassification'
+    }
+)
 
-onnx_model = onnxmltools.convert_catboost(model, name='catboost_example')
+onnx_model = onnxmltools.convert_catboost(model, name='catboost_created_while_converted.onnx')
 
 onnxmltools.utils.save_model(onnx_model, 'catboost.onnx')
+
+model_onnx = onnx.load("boston.onnx")
+onnx.checker.check_model(model_onnx)
 
 model_onnx = onnx.load("catboost.onnx")
 onnx.checker.check_model(model_onnx)

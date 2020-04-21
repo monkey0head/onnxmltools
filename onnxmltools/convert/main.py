@@ -58,7 +58,7 @@ def convert_catboost(model, name=None, initial_types=None, doc_string='', target
     if custom_shape_calculators:
         warnings.warn('custom_shape_calculators is not supported any more. Please set it to None.')
 
-    return model.save_model(
+    model.save_model(
         name,
         format="onnx",
         export_parameters={
@@ -68,6 +68,9 @@ def convert_catboost(model, name=None, initial_types=None, doc_string='', target
             'onnx_graph_name': name
         }
     )
+
+    return onnx.load(name)
+
 
 
 def convert_lightgbm(model, name=None, initial_types=None, doc_string='', target_opset=None,
