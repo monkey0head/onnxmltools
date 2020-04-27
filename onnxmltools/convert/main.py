@@ -56,20 +56,17 @@ def convert_catboost(model, name=None, initial_types=None, doc_string='', target
         warnings.warn('custom_conversion_functions is not supported any more. Please set it to None.')
 
     if custom_shape_calculators:
-        warnings.warn('custom_shape_calculators is not supported any more. Please set it to None.')
+        warnings.warn('custom_shape_calculators is not supported. Please set it to None.')
 
-    model.save_model(
-        name,
-        format="onnx",
-        export_parameters={
-            'onnx_domain': 'ai.catboost',
-            'onnx_model_version': 1,
-            'onnx_doc_string': doc_string,
-            'onnx_graph_name': name
-        }
-    )
+    export_parameters = {
+        'onnx_domain': 'ai.catboost',
+        'onnx_model_version': 0,
+        'onnx_doc_string': doc_string,
+        'onnx_graph_name': name
+    }
 
-    return onnx.load(name)
+    onnx_model = catboost.utils.convert_to_onnx_object(model, export_parameters=export_parameters)
+    return onnx_model
 
 
 
