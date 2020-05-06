@@ -205,6 +205,9 @@ def convert_model(model, name, input_types):
     elif model.__class__.__name__.startswith("XGB"):
         from onnxmltools.convert import convert_xgboost
         model, prefix = convert_xgboost(model, name, input_types), "XGB"
+    elif model.__class__.__name__.startswith("Cat"):
+        from onnxmltools.convert import convert_catboost
+        model, prefix = convert_catboost(model, name, input_types), "Cat"
     elif model.__class__.__name__ == 'Booster':
         import lightgbm
         if isinstance(model, lightgbm.Booster):
@@ -250,7 +253,7 @@ def dump_one_class_classification(model, suffix="", folder=None, allow_failure=N
                                basename=prefix + "One" + model.__class__.__name__ + suffix)
 
 
-def dump_binary_classification(model, suffix="", folder=None, allow_failure=None, verbose=False):
+def dump_multiple_regression(model, suffix="", folder=None, allow_failure=None, verbose=False):
     """
     Trains and dumps a model for a binary classification problem.
 
