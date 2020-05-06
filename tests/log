@@ -1,0 +1,59 @@
+/usr/lib/python3.6/importlib/_bootstrap.py:219: RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
+  return f(*args, **kwds)
+F
+======================================================================
+FAIL: test_catboost_regressor (__main__.TestCatBoostRegressor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/aavolodkevich/ep/onnxmltools/onnxmltools/utils/utils_backend_onnxruntime.py", line 152, in compare_runtime
+    _compare_expected(load["expected"], output, sess, onx, decimal=decimal, **options)
+  File "/data/aavolodkevich/ep/onnxmltools/onnxmltools/utils/utils_backend_onnxruntime.py", line 246, in _compare_expected
+    _compare_expected(exp, out, sess, onnx, decimal=decimal, onnx_shape=osh, **kwargs)
+  File "/data/aavolodkevich/ep/onnxmltools/onnxmltools/utils/utils_backend_onnxruntime.py", line 287, in _compare_expected
+    raise OnnxRuntimeAssertionError("Unexpected output in model '{0}'\n{1}".format(onnx, msg))
+onnxmltools.utils.utils_backend.OnnxRuntimeAssertionError: Unexpected output in model 'tests/temp/CatBoostRegressor.model.onnx'
+max diff(expected, output)=7.654953589053548e-05
+
+Arrays are not almost equal to 5 decimals
+
+Mismatched elements: 28 / 100 (28%)
+Max absolute difference: 7.65495359e-05
+Max relative difference: 5.66846385e-07
+ x: array([ -40.62392,    5.67707,  -90.07549,  -21.88091,   23.47384,
+        -33.27764,   56.5105 , -109.69811,  -28.30019,  106.81327,
+       -113.38175,   97.02042,  -67.00431,  -30.58181, -154.53705,...
+ y: array([ -40.62392,    5.67707,  -90.07549,  -21.88091,   23.47384,
+        -33.27764,   56.51051, -109.6981 ,  -28.30019,  106.81329,
+       -113.38176,   97.0204 ,  -67.00432,  -30.5818 , -154.53706,...
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "catboost/test_CatBoost_converter.py", line 28, in test_catboost_regressor
+    dump_data_and_model(X.astype(numpy.float32), catboost_model, catboost_onnx, basename="CatBoostRegressor")
+  File "/data/aavolodkevich/ep/onnxmltools/onnxmltools/utils/tests_helper.py", line 174, in dump_data_and_model
+    context=context, verbose=verbose)
+  File "/data/aavolodkevich/ep/onnxmltools/onnxmltools/utils/utils_backend.py", line 80, in compare_backend
+    return compare_runtime(test, decimal, options, verbose)
+  File "/data/aavolodkevich/ep/onnxmltools/onnxmltools/utils/utils_backend_onnxruntime.py", line 162, in compare_runtime
+    raise OnnxRuntimeAssertionError("Model '{0}' has discrepencies.\n{1}: {2}{3}".format(onx, type(e), e, smodel))
+onnxmltools.utils.utils_backend.OnnxRuntimeAssertionError: Model 'tests/temp/CatBoostRegressor.model.onnx' has discrepencies.
+<class 'onnxmltools.utils.utils_backend.OnnxRuntimeAssertionError'>: Unexpected output in model 'tests/temp/CatBoostRegressor.model.onnx'
+max diff(expected, output)=7.654953589053548e-05
+
+Arrays are not almost equal to 5 decimals
+
+Mismatched elements: 28 / 100 (28%)
+Max absolute difference: 7.65495359e-05
+Max relative difference: 5.66846385e-07
+ x: array([ -40.62392,    5.67707,  -90.07549,  -21.88091,   23.47384,
+        -33.27764,   56.5105 , -109.69811,  -28.30019,  106.81327,
+       -113.38175,   97.02042,  -67.00431,  -30.58181, -154.53705,...
+ y: array([ -40.62392,    5.67707,  -90.07549,  -21.88091,   23.47384,
+        -33.27764,   56.51051, -109.6981 ,  -28.30019,  106.81329,
+       -113.38176,   97.0204 ,  -67.00432,  -30.5818 , -154.53706,...
+
+----------------------------------------------------------------------
+Ran 1 test in 0.960s
+
+FAILED (failures=1)
