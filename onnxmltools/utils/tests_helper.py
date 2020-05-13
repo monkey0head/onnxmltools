@@ -77,6 +77,8 @@ def dump_data_and_model(data, model, onnx=None, basename="model", folder=None,
     if hasattr(model, "predict"):
         import lightgbm
         import xgboost
+        import catboost
+        print(model.__class__.__name__)
         if isinstance(model, lightgbm.Booster):
             # LightGBM Booster
             model_dict = model.dump_model()
@@ -105,9 +107,15 @@ def dump_data_and_model(data, model, onnx=None, basename="model", folder=None,
                 prediction = [score.argmax(axis=1), score]
             else:
                 prediction = [model.predict(datax)]
+        # elif isinstance(model, catboost.CatBoostClassifier):
+        #     print('CatBoost model processed as classifier, prediction made')
+        #     score = model.predict_proba(data)
+        #     prediction = [score.argmax(axis=1), score]
         elif hasattr(model, "predict_proba"):
             # Classifier
+
             prediction = [model.predict(data), model.predict_proba(data)]
+            print('prediction', prediction)
         elif hasattr(model, "predict_with_probabilities"):
             # Classifier that returns all in one go
             prediction = model.predict_with_probabilities(data)
@@ -122,6 +130,8 @@ def dump_data_and_model(data, model, onnx=None, basename="model", folder=None,
         else:
             # Regressor
             prediction = [model.predict(data)]
+            print('CatBoost model processed as regressor, prediction made')
+            print(prediction)
     elif hasattr(model, "transform"):
         prediction = model.transform(data)
     else:
@@ -134,6 +144,7 @@ def dump_data_and_model(data, model, onnx=None, basename="model", folder=None,
     names.append(dest)
     with open(dest, "wb") as f:
         pickle.dump(prediction, f)
+        print('predictions dumped as pkl')
 
     dest = os.path.join(folder, basename + ".data.pkl")
     names.append(dest)
@@ -155,6 +166,7 @@ def dump_data_and_model(data, model, onnx=None, basename="model", folder=None,
     names.append(dest)
     with open(dest, "wb") as f:
         f.write(onnx.SerializeToString())
+        print('onnx model saved with serialize to string')
 
     runtime_test["onnx"] = dest
 
@@ -170,6 +182,7 @@ def dump_data_and_model(data, model, onnx=None, basename="model", folder=None,
             else:
                 allow = allow_failure
             if allow is None:
+                print('starting compare output')
                 output = compare_backend(b, runtime_test, options=extract_options(basename),
                                          context=context, verbose=verbose)
             else:
@@ -207,6 +220,7 @@ def convert_model(model, name, input_types):
         model, prefix = convert_xgboost(model, name, input_types), "XGB"
     elif model.__class__.__name__.startswith("Cat"):
         from onnxmltools.convert import convert_catboost
+        print('model converted to onnx as catboost')
         model, prefix = convert_catboost(model, name, input_types), "Cat"
     elif model.__class__.__name__ == 'Booster':
         import lightgbm

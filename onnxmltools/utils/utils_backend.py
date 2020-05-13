@@ -72,6 +72,7 @@ def compare_backend(backend, test, decimal=5, options=None, verbose=False, conte
     The function does not return anything but raises an error
     if the comparison failed.
     """
+    print('compare backend started')
     if backend == "onnxruntime":
         if sys.version_info[0] == 2:
             # onnxruntime is not available on Python 2.
@@ -163,7 +164,9 @@ def extract_options(name):
 
     See function *dump_data_and_model* to get the full list.
     """
+    print('name', name)
     opts = name.replace("\\", "/").split("/")[-1].split('.')[0].split('-')
+    print('opts:', opts)
     if len(opts) == 1:
         return {}
     else:
@@ -173,6 +176,7 @@ def extract_options(name):
                 res[opt] = True
             else:
                 raise NameError("Unable to parse option '{}'".format(opts[1:]))
+        print('res', res)
         return res
 
 
@@ -181,6 +185,7 @@ def compare_outputs(expected, output, **kwargs):
     Compares expected values and output.
     Returns None if no error, an exception message otherwise.
     """
+    print('compare outputs started')
     SkipDim1 = kwargs.pop("SkipDim1", False)
     NoProb = kwargs.pop("NoProb", False)
     Dec4 = kwargs.pop("Dec4", False)
@@ -198,7 +203,9 @@ def compare_outputs(expected, output, **kwargs):
         kwargs["decimal"] = min(kwargs["decimal"], 3)
     if Dec2:
         kwargs["decimal"] = min(kwargs["decimal"], 2)
-        
+
+    print('expected', expected)
+    print('output', output)
     if isinstance(expected, numpy.ndarray) and isinstance(output, numpy.ndarray):
         if SkipDim1:
             # Arrays like (2, 1, 2, 3) becomes (2, 2, 3) as one dimension is useless.
@@ -240,6 +247,10 @@ def compare_outputs(expected, output, **kwargs):
                 output_ = output.ravel()
                 if len(expected_) == len(output_):
                     diff = numpy.abs(expected_ - output_).max()
+                    print('expected_', expected_)
+                    print('output_', output_)
+                    print('expected_ - output_', expected_ - output_)
+                    print(diff)
                 elif Mism:
                     return ExpectedAssertionError("dimension mismatch={0}, {1}\n{2}".format(expected.shape, output.shape, e))
                 else:

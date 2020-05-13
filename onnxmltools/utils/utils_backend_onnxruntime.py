@@ -30,6 +30,7 @@ def compare_runtime(test, decimal=5, options=None, verbose=False, context=None):
     The function does not return anything but raises an error
     if the comparison failed.
     """
+    print('compare runtime started')
     if context is None:
         context = {}
     load = load_data_and_model(test, **context)
@@ -97,11 +98,14 @@ def compare_runtime(test, decimal=5, options=None, verbose=False, context=None):
     else:
         raise OnnxRuntimeAssertionError("Dict or list is expected, not {0}".format(type(input)))
 
+    print('inputs parsed')
+    # print('input', input)
     for k in inputs:
         if isinstance(inputs[k], list):
             inputs[k] = numpy.array(inputs[k])
 
     OneOff = options.pop('OneOff', False)
+    print('OneOff', OneOff)
     if OneOff:
         if len(inputs) == 1:
             name, values = list(inputs.items())[0]
@@ -115,6 +119,7 @@ def compare_runtime(test, decimal=5, options=None, verbose=False, context=None):
                     raise OnnxRuntimeAssertionError("Unable to run onnx '{0}' due to {1}".format(onnx, e))
                 res.append(one)
             output = _post_process_output(res)
+            print('onnxruntime output', output)
         else:
             def to_array(vv):
                 if isinstance(vv, (numpy.ndarray, numpy.int64, numpy.float32)):
@@ -136,6 +141,7 @@ def compare_runtime(test, decimal=5, options=None, verbose=False, context=None):
     else:
         try:
             output = sess.run(None, inputs)
+            print(output)
         except ExpectedAssertionError as expe:
             raise expe
         except RuntimeError as e:
@@ -147,6 +153,8 @@ def compare_runtime(test, decimal=5, options=None, verbose=False, context=None):
             raise OnnxRuntimeAssertionError("Unable to run onnx '{0}' due to {1}".format(onx, e))
 
     output0 = output.copy()
+
+    print('ONNX output', output)
 
     try:
         _compare_expected(load["expected"], output, sess, onx, decimal=decimal, **options)
@@ -223,6 +231,7 @@ def _compare_expected(expected, output, sess, onnx, decimal=5, onnx_shape=None, 
     This is specific to *onnxruntime* due to variable *sess*
     of type *onnxruntime.InferenceSession*.
     """
+    print('comparing results')
     tested = 0
     if isinstance(expected, list):
         if isinstance(output, list):
