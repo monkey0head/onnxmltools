@@ -48,15 +48,10 @@ def convert_catboost(model, name=None, initial_types=None, doc_string='', target
     try:
         from catboost.utils import convert_to_onnx_object
     except ImportError:
-        raise RuntimeError('CatBoost is not installed or need to be updated. '
+        raise RuntimeError('CatBoost is not installed or needs to be updated. '
                            'Please install/upgrade CatBoost to use this feature.')
 
-    export_parameters = {
-        'onnx_doc_string': doc_string,
-        'onnx_graph_name': name
-    }
-
-    return convert_to_onnx_object(model, export_parameters=export_parameters,
+    return convert_to_onnx_object(model, export_parameters={'onnx_doc_string': doc_string, 'onnx_graph_name': name},
                                   initial_types=initial_types, target_opset=target_opset)
 
 
